@@ -1,4 +1,5 @@
 import pygame
+import World
 
 WHITE = (255,255,255)
 
@@ -14,6 +15,7 @@ def drawWindow():
 
 
 def main():
+    world = World.World(500, 500, WIN)
     run = True
     while run:
         for event in pygame.event.get():
