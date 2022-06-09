@@ -100,7 +100,7 @@ class World:
                     cell.rect.x / cell.rect.width), "y": int(cell.rect.y / cell.rect.height)}
                 emptyPositions.append(newPosition)
 
-        return emptyPositions[random.randint(0, len(emptyPositions))]
+        return emptyPositions[random.randint(0, len(emptyPositions) - 1)]
 
     def get_collider_with(self, attacker):
         posX, posY = attacker.position["x"], attacker.position["y"]

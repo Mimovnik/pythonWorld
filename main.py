@@ -19,6 +19,7 @@ def drawWindow():
 
 
 def main():
+    pygame.init()
     run = True
     while run:
         for event in pygame.event.get():
