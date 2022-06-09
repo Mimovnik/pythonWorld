@@ -9,10 +9,17 @@ class Organism:
         self.world = world
         self.strength = strength
         self.initiative = initiative
+        self.stunned = False
+        self.dead = False
         self.skin = (255, 0, 0)
         self.name = name
         self.specie = specie
         self.position = world.get_random_empty_pos()
+        posX, posY = self.position["x"], self.position["y"]
+        world.terrain[posX + world.terrainWidth * posY].organism = self
         self.lastPosition = self.position
         self.birthDate = Organism.counter
-        # raise NotImplementedError("Implement this method")
+
+
+    def action(self):
+        raise NotImplementedError("Implement Organism action") 

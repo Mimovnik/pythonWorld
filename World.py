@@ -1,7 +1,6 @@
 import random
-import pygame
 import Cell
-import Organism
+import Animal
 
 
 class World:
@@ -18,7 +17,7 @@ class World:
         cellWidth = int(width / terrainWidth)
         cellHeight = int(height / terrainHeight)
 
-        gap = 1
+        gap = 0
         for c in range(terrainWidth * terrainHeight):
             self.terrain.append(Cell.Cell(posX, posY, cellWidth, cellHeight))
             posX += cellWidth + gap
@@ -37,51 +36,74 @@ class World:
         for o in range(organismsNumber):
             whichOne = random.randint(1, 10)
             if whichOne == 1:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 2:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 3:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 4:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 5:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 6:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 7:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 8:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 9:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
             elif whichOne == 10:
-                self.organisms.append(Organism.Organism(
+                self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie"))
+
 
     def render_organisms(self):
         for o in self.organisms:
             posX, posY = o.position["x"], o.position["y"]
             self.terrain[posX + self.terrainWidth * posY].organism = o
 
+
+    def wipe_cells(self):
+        for cell in self.terrain:
+            cell.organism = 0
+
+
     def draw(self):
+        self.wipe_cells()
         self.render_organisms()
         for cell in self.terrain:
             cell.draw(self.window)
+
+
+    def make_actions(self):
+        for organism in self.organisms:
+            organism.action()
+            self.draw()
+
 
     def get_random_empty_pos(self):
         emptyPositions = []
         for cell in self.terrain:
             if cell.organism == 0:
-                emptyPositions.append(
-                    {"x": int(cell.rect.x / cell.rect.width), "y": int(cell.rect.y / cell.rect.height)})
+                newPosition = {"x": int(
+                    cell.rect.x / cell.rect.width), "y": int(cell.rect.y / cell.rect.height)}
+                emptyPositions.append(newPosition)
 
         return emptyPositions[random.randint(0, len(emptyPositions))]
+
+
+    def get_collider_with(self, attacker):
+        posX, posY = attacker.position["x"], attacker.position["y"]
+        if self.terrain[posX + self.terrainWidth * posY].organism == attacker:
+            return 0
+        return self.terrain[posX + self.terrainWidth * posY].organism
