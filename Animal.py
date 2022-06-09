@@ -5,10 +5,11 @@ import Organism
 
 class Animal(Organism.Organism):
 
-    def __init__(self, world, strength, initiative, name, specie):
+    def __init__(self, world, strength, initiative, name, specie, skin):
+        super(Animal, self).__init__(
+            world, strength, initiative, name, specie, skin)
         self.moveRange = 1
         self.attackedThisTurn = False
-        super(Animal, self).__init__(world, strength, initiative, name, specie)
 
     def action(self):
         self.attackedThisTurn = False
@@ -31,6 +32,9 @@ class Animal(Organism.Organism):
                     return
                 self.attackedThisTurn = True
                 self.collide(defender)
+
+    def take_hit(self, attacker):
+        self.dead = True
 
     def move(self, direction):
         if direction == "NOWHERE":

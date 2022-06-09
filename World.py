@@ -1,5 +1,6 @@
 import random
 import Cell
+import Antelope
 import Animal
 
 
@@ -36,47 +37,48 @@ class World:
         for o in range(organismsNumber):
             whichOne = random.randint(1, 10)
             if whichOne == 1:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                self.organisms.append(Antelope.Antelope(self))
             elif whichOne == 2:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 3:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 4:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 5:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 6:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 7:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 8:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 9:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
             elif whichOne == 10:
                 self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie"))
-
+                    self, 0, 0, "name", "specie", (255, 0, 0)))
 
     def render_organisms(self):
         for o in self.organisms:
             posX, posY = o.position["x"], o.position["y"]
             self.terrain[posX + self.terrainWidth * posY].organism = o
 
+    def remove_dead_organisms(self):
+        for organism in self.organisms:
+            if organism.dead:
+                self.organisms.remove(organism)
 
     def wipe_cells(self):
         for cell in self.terrain:
             cell.organism = 0
-
 
     def draw(self):
         self.wipe_cells()
@@ -84,12 +86,11 @@ class World:
         for cell in self.terrain:
             cell.draw(self.window)
 
-
     def make_actions(self):
         for organism in self.organisms:
             organism.action()
+            self.remove_dead_organisms()
             self.draw()
-
 
     def get_random_empty_pos(self):
         emptyPositions = []
@@ -100,7 +101,6 @@ class World:
                 emptyPositions.append(newPosition)
 
         return emptyPositions[random.randint(0, len(emptyPositions))]
-
 
     def get_collider_with(self, attacker):
         posX, posY = attacker.position["x"], attacker.position["y"]
