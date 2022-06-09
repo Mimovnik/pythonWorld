@@ -1,3 +1,4 @@
+from copy import copy
 import pygame
 
 
@@ -34,3 +35,6 @@ class Organism:
             self.take_hit(defender)
         else:
             defender.take_hit(self)
+
+    def move_back(self):
+        self.position = copy(self.lastPosition)

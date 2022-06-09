@@ -1,8 +1,8 @@
+from copy import copy
 import random
 from Cell import Cell
-import Antelope
-import Animal
 from Event import Event
+import Animal
 
 class World:
 
@@ -39,7 +39,7 @@ class World:
         for o in range(organismsNumber):
             whichOne = random.randint(1, 10)
             if whichOne == 1:
-                self.organisms.append(Antelope.Antelope(self))
+                self.organisms.append(Animal.Antelope(self))
             elif whichOne == 2:
                 self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie", (255, 0, 0)))
@@ -68,10 +68,13 @@ class World:
                 self.organisms.append(Animal.Animal(
                     self, 0, 0, "name", "specie", (255, 0, 0)))
 
+    def get_cell(self, x, y):
+        return self.terrain[x + self.terrainWidth * y]
+
     def render_organisms(self):
         for o in self.organisms:
             posX, posY = o.position["x"], o.position["y"]
-            self.terrain[posX + self.terrainWidth * posY].organism = o
+            self.get_cell(posX, posY).organism = o
 
     def remove_dead_organisms(self):
         for organism in self.organisms:
@@ -81,6 +84,15 @@ class World:
     def wipe_cells(self):
         for cell in self.terrain:
             cell.organism = 0
+
+    def write_event(self, text, color = (255, 255, 255)):
+        self.events.append(Event(text, color))
+
+    def add_organism(self, newborn, birthPos):
+        newborn.position = birthPos
+        newborn.lastPosition = copy(birthPos)
+        newborn.stunned = True
+        self.organisms.append(newborn)
 
     def draw(self):
         self.wipe_cells()
@@ -106,6 +118,6 @@ class World:
 
     def get_collider_with(self, attacker):
         posX, posY = attacker.position["x"], attacker.position["y"]
-        if self.terrain[posX + self.terrainWidth * posY].organism == attacker:
+        if self.get_cell(posX, posY).organism == attacker:
             return 0
-        return self.terrain[posX + self.terrainWidth * posY].organism
+        return self.get_cell(posX, posY).organism

@@ -1,4 +1,5 @@
 from copy import copy
+from Event import Event
 import random
 import Organism
 
@@ -28,12 +29,34 @@ class Animal(Organism.Organism):
             defender = self.world.get_collider_with(self)
             if defender != 0:
                 if defender.specie == self.specie:
-                    # self.breed(defender)
+                    self.breed(defender)
                     return
                 self.attackedThisTurn = True
+                self.world.write_event(
+                    self.name + " attacks " + defender.name + ".", (255, 120, 0))
                 self.collide(defender)
 
+    def breed(self, partner):
+        self.move_back()
+        if random.randint(0, 1) == 1:
+            return
+
+        for x in range(3):
+            for y in range(3):
+                birthPos = {"x": min(self.position["x"] + x - 1, self.world.terrainWidth - 1),
+                            "y": min(self.position["y"] + y - 1, self.world.terrainHeight - 1)}
+                if self.world.get_cell(birthPos["x"], birthPos["y"]).organism == 0:
+                    self.world.write_event(
+                        self.name + " have a baby with " + partner.name + ".", (249, 93, 204))
+                    self.world.add_organism(self.give_birth(), birthPos)
+                    return
+
+    def give_birth(self):
+        return Animal(self.world, 0, 0, "newborn", "specie", (255, 0, 0))
+
     def take_hit(self, attacker):
+        self.world.write_event(
+            self.name + " took a hit from " + attacker.name + " and died.", (255, 0, 0))
         self.dead = True
 
     def move(self, direction):
@@ -62,3 +85,14 @@ class Animal(Organism.Organism):
             return "RIGHT"
         else:
             return "DOWN"
+
+
+class Antelope(Animal):
+
+    def __init__(self, world):
+        super(Antelope, self).__init__(world, 4, 4,
+                                       "Antelope", "Antelope", (238, 182, 95))
+        self.moveRange = 2
+
+    def give_birth(self):
+        return Antelope(self.world)
