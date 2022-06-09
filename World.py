@@ -35,7 +35,7 @@ class World:
 
         self.organisms = []
 
-        # self.organisms.append(Human.Human(self))
+        self.organisms.append(Animal.Human(self))
 
         for o in range(organismsNumber):
             whichOne = random.randint(1, 10)
@@ -44,13 +44,13 @@ class World:
             elif whichOne == 2:
                 self.organisms.append(Animal.Fox(self))
             elif whichOne == 3:
-                self.organisms.append(Animal.Human(self))
-            elif whichOne == 4:
                 self.organisms.append(Animal.Sheep(self))
-            elif whichOne == 5:
+            elif whichOne == 4:
                 self.organisms.append(Animal.Turtle(self))
-            elif whichOne == 6:
+            elif whichOne == 5:
                 self.organisms.append(Animal.Wolf(self))
+            # elif whichOne == 6:
+            #     self.organisms.append(Plant.odgsa(self))
             # elif whichOne == 7:
             #     self.organisms.append(Plant.Animal())
             # elif whichOne == 8:
@@ -93,6 +93,7 @@ class World:
             cell.draw(self.window)
 
     def make_actions(self):
+        self.organisms.sort(key=lambda o: o.initiative, reverse=True)
         for organism in self.organisms:
             self.events.append(
                 Event("This is " + organism.name() + "'s turn.", (192, 192, 192)))

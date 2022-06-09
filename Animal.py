@@ -47,7 +47,7 @@ class Animal(Organism.Organism):
                             "y": min(self.position["y"] + y - 1, self.world.terrainHeight - 1)}
                 if self.world.get_cell(birthPos["x"], birthPos["y"]).organism == 0:
                     self.world.write_event(
-                        self.name() + " have a baby with " + partner.name() + ".", (249, 93, 204))
+                        self.name() + " has a baby with " + partner.name() + ".", (249, 93, 204))
                     self.world.add_organism(self.give_birth(), birthPos)
                     return
 
