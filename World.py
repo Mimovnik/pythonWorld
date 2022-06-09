@@ -20,7 +20,7 @@ class World:
         cellWidth = int(width / terrainWidth)
         cellHeight = int(height / terrainHeight)
 
-        gap = 0
+        gap = 1
         for c in range(terrainWidth * terrainHeight):
             self.terrain.append(Cell(posX, posY, cellWidth, cellHeight))
             posX += cellWidth + gap

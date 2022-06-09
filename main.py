@@ -15,7 +15,7 @@ pygame.display.set_caption("Python World")
 
 world = World(WORLD_WIDTH, WORLD_HEIGHT, TERRAIN_WIDTH, TERRAIN_HEIGHT, WIN)
 
-battleLog = BattleLog()
+battleLog = BattleLog(world.terrain[-1].rect.x + world.terrain[-1].rect.width + 10)
 
 def draw_window():
     WIN.fill(WHITE)
