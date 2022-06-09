@@ -1,8 +1,8 @@
 import random
-import Cell
+from Cell import Cell
 import Antelope
 import Animal
-
+from Event import Event
 
 class World:
 
@@ -10,6 +10,8 @@ class World:
         self.width = width
         self.height = height
         self.window = window
+
+        self.events = []
 
         self.terrainWidth, self.terrainHeight = terrainWidth, terrainHeight
 
@@ -20,7 +22,7 @@ class World:
 
         gap = 0
         for c in range(terrainWidth * terrainHeight):
-            self.terrain.append(Cell.Cell(posX, posY, cellWidth, cellHeight))
+            self.terrain.append(Cell(posX, posY, cellWidth, cellHeight))
             posX += cellWidth + gap
             if c % terrainWidth == terrainWidth - 1:
                 posY += cellHeight + gap
@@ -32,7 +34,7 @@ class World:
 
         self.organisms = []
 
-        # self.organisms.append(Human(self))
+        # self.organisms.append(Human.Human(self))
 
         for o in range(organismsNumber):
             whichOne = random.randint(1, 10)
@@ -88,9 +90,9 @@ class World:
 
     def make_actions(self):
         for organism in self.organisms:
+            self.events.append(Event("This is " + organism.name + "'s turn.", (192, 192, 192)))
             organism.action()
             self.remove_dead_organisms()
-            self.draw()
 
     def get_random_empty_pos(self):
         emptyPositions = []

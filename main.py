@@ -1,5 +1,8 @@
 import pygame
-import World
+from BattleLog import BattleLog
+from World import World
+
+pygame.init()
 
 WHITE = (255,255,255)
 
@@ -10,16 +13,21 @@ WORLD_WIDTH, WORLD_HEIGHT = 500, 500
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption("Python World")
 
-world = World.World(WORLD_WIDTH, WORLD_HEIGHT, TERRAIN_WIDTH, TERRAIN_HEIGHT, WIN)
+world = World(WORLD_WIDTH, WORLD_HEIGHT, TERRAIN_WIDTH, TERRAIN_HEIGHT, WIN)
 
-def drawWindow():
+battleLog = BattleLog()
+
+def draw_window():
     WIN.fill(WHITE)
     world.draw()
+    battleLog.draw(world.events, WIN)
     pygame.display.update()
 
+def make_turn():
+    world.events.clear()
+    world.make_actions()
 
 def main():
-    pygame.init()
     run = True
     while run:
         for event in pygame.event.get():
@@ -27,9 +35,9 @@ def main():
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    world.make_actions()
+                    make_turn()
 
-        drawWindow()
+        draw_window()
 
 
 if __name__ == "__main__":
