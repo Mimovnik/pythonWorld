@@ -5,7 +5,7 @@ import pygame
 class Organism:
     counter = 0
 
-    def __init__(self, world, strength, initiative, name, specie, skin):
+    def __init__(self, world, strength, initiative, specie, skin):
         Organism.counter += 1
         self.world = world
         self.strength = strength
@@ -13,13 +13,15 @@ class Organism:
         self.stunned = False
         self.dead = False
         self.skin = skin
-        self.name = name
         self.specie = specie
         self.position = world.get_random_empty_pos()
         posX, posY = self.position["x"], self.position["y"]
         world.terrain[posX + world.terrainWidth * posY].organism = self
         self.lastPosition = self.position
         self.birthDate = Organism.counter
+
+    def name(self):
+        return self.specie + "(" + str(self.birthDate) + ")"
 
     def action(self):
         raise NotImplementedError("Implement Organism action")

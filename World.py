@@ -4,6 +4,7 @@ from Cell import Cell
 from Event import Event
 import Animal
 
+
 class World:
 
     def __init__(self, width, height, terrainWidth, terrainHeight, window):
@@ -41,32 +42,23 @@ class World:
             if whichOne == 1:
                 self.organisms.append(Animal.Antelope(self))
             elif whichOne == 2:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
+                self.organisms.append(Animal.Fox(self))
             elif whichOne == 3:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
+                self.organisms.append(Animal.Human(self))
             elif whichOne == 4:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
+                self.organisms.append(Animal.Sheep(self))
             elif whichOne == 5:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
+                self.organisms.append(Animal.Turtle(self))
             elif whichOne == 6:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
-            elif whichOne == 7:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
-            elif whichOne == 8:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
-            elif whichOne == 9:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
-            elif whichOne == 10:
-                self.organisms.append(Animal.Animal(
-                    self, 0, 0, "name", "specie", (255, 0, 0)))
+                self.organisms.append(Animal.Wolf(self))
+            # elif whichOne == 7:
+            #     self.organisms.append(Plant.Animal())
+            # elif whichOne == 8:
+            #     self.organisms.append(Plant.Animal())
+            # elif whichOne == 9:
+            #     self.organisms.append(Plant.Animal())
+            # elif whichOne == 10:
+            #     self.organisms.append(Plant.Animal())
 
     def get_cell(self, x, y):
         return self.terrain[x + self.terrainWidth * y]
@@ -85,7 +77,7 @@ class World:
         for cell in self.terrain:
             cell.organism = 0
 
-    def write_event(self, text, color = (255, 255, 255)):
+    def write_event(self, text, color=(255, 255, 255)):
         self.events.append(Event(text, color))
 
     def add_organism(self, newborn, birthPos):
@@ -102,7 +94,8 @@ class World:
 
     def make_actions(self):
         for organism in self.organisms:
-            self.events.append(Event("This is " + organism.name + "'s turn.", (192, 192, 192)))
+            self.events.append(
+                Event("This is " + organism.name() + "'s turn.", (192, 192, 192)))
             organism.action()
             self.remove_dead_organisms()
 
