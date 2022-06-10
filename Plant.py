@@ -15,6 +15,8 @@ class Plant(Organism):
             self.stunned = False
             return
         for i in range(self.spreadTries):
+            if self.dead:
+                return
             if random.randint(0, 10) == 1:
                 self.spread()
 
@@ -73,7 +75,7 @@ class Hogweed(Plant):
 
     def __init__(self, world):
         super(Hogweed, self).__init__(
-            world, 0, 0, "Hogweed", (255, 255, 240))
+            world, 0, 0, "Hogweed", (255, 255, 220))
 
     def get_sapling(self):
         return Hogweed(self.world)

@@ -74,7 +74,7 @@ class World:
         for organism in self.organisms:
             posX, posY = organism.position["x"], organism.position["y"]
             if self.get_cell(posX, posY).organism != 0:
-                raise RuntimeError(
+                 raise RuntimeError(
                     "render_organisms: Two organisms on the same cell")
             self.get_cell(posX, posY).organism = organism
 
@@ -84,11 +84,14 @@ class World:
         self.stamp_organisms_on_cells()
 
     def remove_dead_organisms(self):
+        toRemove = []
         for organism in self.organisms:
             if organism.dead:
                 self.get_cell(
                     organism.position["x"], organism.position["y"]).organism = 0
-                self.organisms.remove(organism)
+                toRemove.append(organism)
+        for organism in toRemove:
+            self.organisms.remove(organism)
 
     def write_event(self, text, color=(255, 255, 255)):
         self.events.append(Event(text, color))
