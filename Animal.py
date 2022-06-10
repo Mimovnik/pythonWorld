@@ -14,7 +14,7 @@ class Animal(Organism.Organism):
 
     def action(self):
         self.attackedThisTurn = False
-        if(self.stunned == True):
+        if(self.stunned):
             self.stunned = False
             return
 
@@ -60,20 +60,35 @@ class Animal(Organism.Organism):
         self.dead = True
 
     def move(self, direction):
+        moveDescription = self.name()
         if direction == "NOWHERE":
+            moveDescription += " doesn't move."
             return
         elif direction == "LEFT":
             if self.position["x"] > 0:
                 self.position["x"] -= 1
+                moveDescription += " moves left."
+            else:
+                moveDescription += " tries to move left but hits a wall."
         elif direction == "RIGHT":
             if self.position["x"] + 1 < self.world.terrainWidth:
                 self.position["x"] += 1
+                moveDescription += " moves right."
+            else:
+                moveDescription += " tries to move right but hits a wall."
         elif direction == "UP":
             if self.position["y"] > 0:
                 self.position["y"] -= 1
+                moveDescription += " moves up."
+            else:
+                moveDescription += " tries to move up but hits a wall."
         else:
             if self.position["y"] + 1 < self.world.terrainHeight:
                 self.position["y"] += 1
+                moveDescription += " moves down."
+            else:
+                moveDescription += " tries to move down but hits a wall."
+        self.world.write_event(moveDescription)
 
     def get_direction(self):
         rnd = random.randint(1, 4)

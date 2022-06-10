@@ -28,6 +28,7 @@ def make_turn():
     world.make_actions()
 
 def main():
+    draw_window()
     run = True
     while run:
         for event in pygame.event.get():
@@ -36,8 +37,8 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     make_turn()
+                    draw_window()
 
-        draw_window()
 
 
 if __name__ == "__main__":

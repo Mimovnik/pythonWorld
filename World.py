@@ -103,9 +103,6 @@ class World:
     def make_actions(self):
         self.organisms.sort(key=lambda organism: organism.initiative, reverse=True)
         for organism in self.organisms:
-            if organism.stunned == False:
-                self.events.append(
-                    Event("This is " + organism.name() + "'s turn.", (192, 192, 192)))
             organism.action()
             self.update_terrain()
 
