@@ -63,42 +63,51 @@ class World:
     def get_cell(self, x, y):
         return self.terrain[x + self.terrainWidth * y]
 
-    def render_organisms(self):
-        for o in self.organisms:
-            posX, posY = o.position["x"], o.position["y"]
-            self.get_cell(posX, posY).organism = o
+    def wipe_cells(self):
+        for cell in self.terrain:
+            cell.organism = 0
+
+    def stamp_organisms_on_cells(self):
+        for organism in self.organisms:
+            posX, posY = organism.position["x"], organism.position["y"]
+            if self.get_cell(posX, posY).organism != 0:
+                raise RuntimeError("render_organisms: Two organisms on the same cell")
+            self.get_cell(posX, posY).organism = organism
+
+    def update_terrain(self):
+        self.wipe_cells()
+        self.remove_dead_organisms()
+        self.stamp_organisms_on_cells()
 
     def remove_dead_organisms(self):
         for organism in self.organisms:
             if organism.dead:
+                self.get_cell(organism.position["x"], organism.position["y"]).organism = 0
                 self.organisms.remove(organism)
-
-    def wipe_cells(self):
-        for cell in self.terrain:
-            cell.organism = 0
 
     def write_event(self, text, color=(255, 255, 255)):
         self.events.append(Event(text, color))
 
     def add_organism(self, newborn, birthPos):
-        newborn.position = birthPos
+        self.get_cell(newborn.position["x"], newborn.position["y"]).organism = 0
+        self.get_cell(birthPos["x"], birthPos["y"]).organism = newborn
+        newborn.position = copy(birthPos)
         newborn.lastPosition = copy(birthPos)
         newborn.stunned = True
         self.organisms.append(newborn)
 
     def draw(self):
-        self.wipe_cells()
-        self.render_organisms()
         for cell in self.terrain:
             cell.draw(self.window)
 
     def make_actions(self):
-        self.organisms.sort(key=lambda o: o.initiative, reverse=True)
+        self.organisms.sort(key=lambda organism: organism.initiative, reverse=True)
         for organism in self.organisms:
-            self.events.append(
-                Event("This is " + organism.name() + "'s turn.", (192, 192, 192)))
+            if organism.stunned == False:
+                self.events.append(
+                    Event("This is " + organism.name() + "'s turn.", (192, 192, 192)))
             organism.action()
-            self.remove_dead_organisms()
+            self.update_terrain()
 
     def get_random_empty_pos(self):
         emptyPositions = []

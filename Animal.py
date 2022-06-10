@@ -14,7 +14,7 @@ class Animal(Organism.Organism):
 
     def action(self):
         self.attackedThisTurn = False
-        if(self.stunned):
+        if(self.stunned == True):
             self.stunned = False
             return
 
@@ -43,8 +43,8 @@ class Animal(Organism.Organism):
 
         for x in range(3):
             for y in range(3):
-                birthPos = {"x": min(self.position["x"] + x - 1, self.world.terrainWidth - 1),
-                            "y": min(self.position["y"] + y - 1, self.world.terrainHeight - 1)}
+                birthPos = {"x": max(min(self.position["x"] + x - 1, self.world.terrainWidth - 1), 0),
+                            "y": max(min(self.position["y"] + y - 1, self.world.terrainHeight - 1), 0)}
                 if self.world.get_cell(birthPos["x"], birthPos["y"]).organism == 0:
                     self.world.write_event(
                         self.name() + " has a baby with " + partner.name() + ".", (249, 93, 204))

@@ -16,7 +16,7 @@ class Organism:
         self.specie = specie
         self.position = world.get_random_empty_pos()
         posX, posY = self.position["x"], self.position["y"]
-        world.terrain[posX + world.terrainWidth * posY].organism = self
+        world.get_cell(posX, posY).organism = self
         self.lastPosition = self.position
         self.birthDate = Organism.counter
 
