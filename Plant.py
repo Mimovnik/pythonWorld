@@ -33,7 +33,7 @@ class Plant(Organism):
 
     def take_hit(self, attacker):
         self.world.write_event(
-            self.name() + " got eaten by " + attacker.name() + " and died.", (255, 0, 0))
+            self.name() + " got eaten by " + attacker.name() + ".", (255, 0, 0))
         self.dead = True
 
     def get_sapling(self):

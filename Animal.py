@@ -11,10 +11,9 @@ class Animal(Organism):
         super(Animal, self).__init__(
             world, strength, initiative, specie, skin)
         self.moveRange = 1
-        self.attackedThisTurn = False
+        self.isAttacking = False
 
     def action(self):
-        self.attackedThisTurn = False
         if(self.stunned):
             self.stunned = False
             return
@@ -32,10 +31,11 @@ class Animal(Organism):
                 if defender.specie == self.specie:
                     self.breed(defender)
                     return
-                self.attackedThisTurn = True
+                self.isAttacking = True 
                 self.world.write_event(
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
+                self.isAttacking = False
 
     def breed(self, partner):
         self.move_back()
@@ -112,6 +112,34 @@ class Antelope(Animal):
     def give_birth(self):
         return Antelope(self.world)
 
+    def take_hit(self, attacker):
+        if random.randint(0, 1) == 1 and self.isAttacking == False:
+            self.escape()
+        else:
+            self.world.write_event(
+                self.name() + " took a hit from " + attacker.name() + " and died.", (255, 0, 0))
+            self.dead = True
+
+    def escape(self):
+        escapePositions = []
+        for x in range(3):
+            for y in range(3):
+                escapePos = {"x": max(min(self.position["x"] + x - 1, self.world.terrainWidth - 1), 0),
+                             "y": max(min(self.position["y"] + y - 1, self.world.terrainHeight - 1), 0)}
+                organism = self.world.get_cell(
+                    escapePos["x"], escapePos["y"]).organism
+                if organism == 0:
+                    escapePositions.append(escapePos)
+
+        if len(escapePositions) == 0:
+            self.world.write_event(
+                self.name() + " couldn't escape.", (50, 50, 50))
+        else:
+            self.world.write_event(
+                self.name() + " escapes  unharmed.", (255, 0, 0))
+            self.position = escapePositions[random.randint(
+                0, len(escapePositions) - 1)]
+
 
 class Fox(Animal):
 
@@ -133,7 +161,6 @@ class Human(Animal):
         return Human(self.world)
 
     def action(self):
-        self.attackedThisTurn = False
         if(self.stunned):
             self.stunned = False
             return
@@ -153,10 +180,11 @@ class Human(Animal):
                 if defender.specie == self.specie:
                     self.breed(defender)
                     return
-                self.attackedThisTurn = True
+                self.isAttacking = True 
                 self.world.write_event(
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
+                self.isAttacking = False 
 
     def get_direction(self):
         displayBQH = False
