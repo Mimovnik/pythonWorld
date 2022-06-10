@@ -1,3 +1,4 @@
+import os
 import pygame
 from Game import Game
 
@@ -11,8 +12,10 @@ def main():
 
     FONT = pygame.font.SysFont("Noto Sans", 32)
 
-    entry = FONT.render("Press 's' to load from save or 'n' to create a new world", True, (0, 0, 0))
-    WIN.blit(entry, (int(WIN_WIDTH / 2 - entry.get_width() / 2), int(WIN_HEIGHT / 2 - entry.get_height() / 2)))
+    entry = FONT.render(
+        "Press 's' to load from save or 'n' to create a new world", True, (0, 0, 0))
+    WIN.blit(entry, (int(WIN_WIDTH / 2 - entry.get_width() / 2),
+             int(WIN_HEIGHT / 2 - entry.get_height() / 2)))
 
     pygame.display.update()
 
@@ -27,9 +30,20 @@ def main():
                 elif event.key == pygame.K_n:
                     run = Game(WIN).game()
                 elif event.key == pygame.K_s:
-                    run = Game(WIN, True).game()
+                    if savefile_exists():
+                        run = Game(WIN, True).game()
+                    else:
+                        entry = FONT.render(
+                            "There are no saves yet.", True, (0, 0, 0))
+                        WIN.blit(entry, (int(WIN_WIDTH / 2 - entry.get_width() / 2),
+                                 int(WIN_HEIGHT / 2 - entry.get_height() / 2) + 100))
+                        pygame.display.update()
+
     pygame.quit()
 
+
+def savefile_exists():
+    os.path.isfile("save.txt")
 
 
 if __name__ == "__main__":
