@@ -1,10 +1,9 @@
 from copy import copy
-from Event import Event
 import random
-import Organism
+from Organism import Organism
 
 
-class Animal(Organism.Organism):
+class Animal(Organism):
 
     def __init__(self, world, strength, initiative, specie, skin):
         super(Animal, self).__init__(
@@ -137,6 +136,16 @@ class Sheep(Animal):
 
     def give_birth(self):
         return Sheep(self.world)
+
+
+class CyberSheep(Sheep):
+
+    def __init__(self, world):
+        super(CyberSheep, self).__init__(world)
+        self.cyber = True
+
+    def give_birth(self):
+        return CyberSheep(self.world)
 
 
 class Turtle(Animal):

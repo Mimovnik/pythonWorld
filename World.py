@@ -3,6 +3,7 @@ import random
 from Cell import Cell
 from Event import Event
 import Animal
+import Plant
 
 
 class World:
@@ -38,7 +39,7 @@ class World:
         self.organisms.append(Animal.Human(self))
 
         for o in range(organismsNumber):
-            whichOne = random.randint(1, 10)
+            whichOne = random.randint(1, 11)
             if whichOne == 1:
                 self.organisms.append(Animal.Antelope(self))
             elif whichOne == 2:
@@ -46,19 +47,21 @@ class World:
             elif whichOne == 3:
                 self.organisms.append(Animal.Sheep(self))
             elif whichOne == 4:
-                self.organisms.append(Animal.Turtle(self))
+                self.organisms.append(Animal.CyberSheep(self))
             elif whichOne == 5:
+                self.organisms.append(Animal.Turtle(self))
+            elif whichOne == 6:
                 self.organisms.append(Animal.Wolf(self))
-            # elif whichOne == 6:
-            #     self.organisms.append(Plant.odgsa(self))
-            # elif whichOne == 7:
-            #     self.organisms.append(Plant.Animal())
-            # elif whichOne == 8:
-            #     self.organisms.append(Plant.Animal())
-            # elif whichOne == 9:
-            #     self.organisms.append(Plant.Animal())
-            # elif whichOne == 10:
-            #     self.organisms.append(Plant.Animal())
+            elif whichOne == 7:
+                self.organisms.append(Plant.Dandelion(self))
+            elif whichOne == 8:
+                self.organisms.append(Plant.Grass(self))
+            elif whichOne == 9:
+                self.organisms.append(Plant.Guarana(self))
+            elif whichOne == 10:
+                self.organisms.append(Plant.Hogweed(self))
+            else:
+                self.organisms.append(Plant.Wolfberry(self))
 
     def get_cell(self, x, y):
         return self.terrain[x + self.terrainWidth * y]
@@ -71,7 +74,8 @@ class World:
         for organism in self.organisms:
             posX, posY = organism.position["x"], organism.position["y"]
             if self.get_cell(posX, posY).organism != 0:
-                raise RuntimeError("render_organisms: Two organisms on the same cell")
+                raise RuntimeError(
+                    "render_organisms: Two organisms on the same cell")
             self.get_cell(posX, posY).organism = organism
 
     def update_terrain(self):
@@ -82,14 +86,16 @@ class World:
     def remove_dead_organisms(self):
         for organism in self.organisms:
             if organism.dead:
-                self.get_cell(organism.position["x"], organism.position["y"]).organism = 0
+                self.get_cell(
+                    organism.position["x"], organism.position["y"]).organism = 0
                 self.organisms.remove(organism)
 
     def write_event(self, text, color=(255, 255, 255)):
         self.events.append(Event(text, color))
 
     def add_organism(self, newborn, birthPos):
-        self.get_cell(newborn.position["x"], newborn.position["y"]).organism = 0
+        self.get_cell(newborn.position["x"],
+                      newborn.position["y"]).organism = 0
         self.get_cell(birthPos["x"], birthPos["y"]).organism = newborn
         newborn.position = copy(birthPos)
         newborn.lastPosition = copy(birthPos)
@@ -101,7 +107,8 @@ class World:
             cell.draw(self.window)
 
     def make_actions(self):
-        self.organisms.sort(key=lambda organism: organism.initiative, reverse=True)
+        self.organisms.sort(
+            key=lambda organism: organism.initiative, reverse=True)
         for organism in self.organisms:
             organism.action()
             self.update_terrain()
