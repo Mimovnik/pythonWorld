@@ -3,6 +3,7 @@ import random
 
 import pygame
 from Organism import Organism
+from Plant import Hogweed
 
 
 class Animal(Organism):
@@ -36,17 +37,35 @@ class Animal(Organism):
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
                 self.isAttacking = False
+            if self.dead == False:
+                self.update_position()
+
+    def die(self):
+        self.dead = True
+        if self.isAttacking:
+            self.world.get_cell(self.lastPosition["x"], self.lastPosition["y"]).organism = 0
+        else:
+            self.world.get_cell(self.position["x"], self.position["y"]).organism = 0
+
+
 
     def breed(self, partner):
         self.move_back()
         if random.randint(0, 1) == 1:
             return
 
-        for x in range(3):
-            for y in range(3):
-                birthPos = {"x": max(min(self.position["x"] + x - 1, self.world.terrainWidth - 1), 0),
-                            "y": max(min(self.position["y"] + y - 1, self.world.terrainHeight - 1), 0)}
-                if self.world.get_cell(birthPos["x"], birthPos["y"]).organism == 0:
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x == 0 or y == 0:
+                    continue
+                birthPos = {"x": self.position["x"] + x,
+                            "y": self.position["y"] + y}
+                birthCell = self.world.get_cell(self.position["x"] + x,
+                                                self.position["y"] + y)
+                if birthCell == "OUT_OF_BOUND":
+                    continue
+
+                if birthCell.organism == 0:
                     self.world.write_event(
                         self.name() + " has a baby with " + partner.name() + ".", (249, 93, 204))
                     self.world.add_organism(self.give_birth(), birthPos)
@@ -58,7 +77,7 @@ class Animal(Organism):
     def take_hit(self, attacker):
         self.world.write_event(
             self.name() + " took a hit from " + attacker.name() + " and died.", (255, 0, 0))
-        self.dead = True
+        self.die()
 
     def move(self, direction):
         moveDescription = self.name()
@@ -113,27 +132,33 @@ class Antelope(Animal):
         return Antelope(self.world)
 
     def take_hit(self, attacker):
-        if random.randint(0, 1) == 1 and self.isAttacking == False:
+        if random.randint(0, 1) == 1 and self.isAttacking == False and isinstance(attacker, Hogweed) == False:
             self.escape()
         else:
             self.world.write_event(
                 self.name() + " took a hit from " + attacker.name() + " and died.", (255, 0, 0))
-            self.dead = True
+            self.die()
 
     def escape(self):
         escapePositions = []
-        for x in range(3):
-            for y in range(3):
-                escapePos = {"x": max(min(self.position["x"] + x - 1, self.world.terrainWidth - 1), 0),
-                             "y": max(min(self.position["y"] + y - 1, self.world.terrainHeight - 1), 0)}
-                organism = self.world.get_cell(
-                    escapePos["x"], escapePos["y"]).organism
-                if organism == 0:
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x == 0 or y == 0:
+                    continue
+                escapePos = {"x": self.position["x"] + x,
+                             "y": self.position["y"] + y}
+                escapeCell = self.world.get_cell(escapePos["x"],
+                                                 escapePos["y"])
+                if escapeCell == "OUT_OF_BOUND":
+                    continue
+
+                if escapeCell.organism == 0:
                     escapePositions.append(escapePos)
 
         if len(escapePositions) == 0:
             self.world.write_event(
                 self.name() + " couldn't escape.", (50, 50, 50))
+            self.die()
         else:
             self.world.write_event(
                 self.name() + " escapes  unharmed.", (255, 0, 0))
@@ -218,6 +243,8 @@ class Human(Animal):
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
                 self.isAttacking = False
+            if self.dead == False:
+                self.update_position()
 
     def get_direction(self):
         displayBQH = False
@@ -238,7 +265,8 @@ class Human(Animal):
                     elif event.key == pygame.K_DOWN:
                         return "DOWN"
                     elif event.key == pygame.K_e:
-                        self.abilityActive = True
+                        if self.abilityOnCooldown == False:
+                            self.abilityActive = True
 
     def set_hints(self, hints, displayBQH):
         hints.append("You're a Human (Pink rectangle), arrows- movement, ")
@@ -302,6 +330,7 @@ class CyberSheep(Sheep):
     def __init__(self, world):
         super(CyberSheep, self).__init__(world)
         self.cyber = True
+        self.skin = (0, 0, 0)
 
     def give_birth(self):
         return CyberSheep(self.world)

@@ -26,13 +26,25 @@ class Organism:
     def action(self):
         raise NotImplementedError("Implement Organism action")
 
+    def update_position(self):
+        self.world.get_cell(self.lastPosition["x"],
+                            self.lastPosition["y"]).organism = 0
+        self.world.get_cell(self.position["x"],
+                            self.position["y"]).organism = self
+
     def take_hit(self, attacker):
         raise NotImplementedError("Implement Organism take_hit")
     
+    def die(self):
+        self.dead = True
+        self.world.get_cell(self.position["x"], self.position["y"]).organism = 0
+
     def buff(self, additionalStrength):
         self.strength += additionalStrength
-        self.world.write_event(self.name() + " got +" + str(additionalStrength) + " strength.", (0, 255, 0))
-        self.world.write_event("Total(" + str(self.strength) + ").", (0, 255, 0))
+        self.world.write_event(
+            self.name() + " got +" + str(additionalStrength) + " strength.", (0, 255, 0))
+        self.world.write_event(
+            "Total(" + str(self.strength) + ").", (0, 255, 0))
 
     def is_stronger(self, other):
         return self.strength >= other.strength

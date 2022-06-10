@@ -68,29 +68,19 @@ class World:
             return "OUT_OF_BOUND"
         return self.terrain[x + self.terrainWidth * y]
 
-    def wipe_cells(self):
-        for cell in self.terrain:
-            cell.organism = 0
-
     def stamp_organisms_on_cells(self):
         for organism in self.organisms:
             posX, posY = organism.position["x"], organism.position["y"]
             if self.get_cell(posX, posY).organism != 0:
                  raise RuntimeError(
-                    "render_organisms: Two organisms on the same cell")
+                    "stamp_organisms_on_cells: Two organisms on the same cell")
             self.get_cell(posX, posY).organism = organism
 
-    def update_terrain(self):
-        self.wipe_cells()
-        self.remove_dead_organisms()
-        self.stamp_organisms_on_cells()
 
     def remove_dead_organisms(self):
         toRemove = []
         for organism in self.organisms:
             if organism.dead:
-                self.get_cell(
-                    organism.position["x"], organism.position["y"]).organism = 0
                 toRemove.append(organism)
         for organism in toRemove:
             self.organisms.remove(organism)
@@ -116,7 +106,7 @@ class World:
             key=lambda organism: organism.initiative, reverse=True)
         for organism in self.organisms:
             organism.action()
-            self.update_terrain()
+            self.remove_dead_organisms()
 
     def get_random_empty_pos(self):
         emptyPositions = []
