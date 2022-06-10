@@ -88,7 +88,7 @@ class Hogweed(Plant):
         return Hogweed(self.world)
 
     def is_stronger(self, other):
-        if isinstance(type(other), Animal.CyberSheep):
+        if isinstance(other, Animal.CyberSheep):
             return False
         return True
 
@@ -121,7 +121,10 @@ class Wolfberry(Plant):
 
     def __init__(self, world):
         super(Wolfberry, self).__init__(
-            world, 0, 0, "Wolfberry", (52, 173, 79))
+            world, 99, 0, "Wolfberry", (52, 173, 79))
 
     def get_sapling(self):
         return Wolfberry(self.world)
+
+    def is_stronger(self, other):
+        return True

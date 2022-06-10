@@ -38,6 +38,7 @@ def main():
                 if event.key == pygame.K_SPACE:
                     make_turn()
                     draw_window()
+    pygame.quit()
 
 
 

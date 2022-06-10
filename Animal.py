@@ -43,11 +43,11 @@ class Animal(Organism):
     def die(self):
         self.dead = True
         if self.isAttacking:
-            self.world.get_cell(self.lastPosition["x"], self.lastPosition["y"]).organism = 0
+            self.world.get_cell(
+                self.lastPosition["x"], self.lastPosition["y"]).organism = 0
         else:
-            self.world.get_cell(self.position["x"], self.position["y"]).organism = 0
-
-
+            self.world.get_cell(
+                self.position["x"], self.position["y"]).organism = 0
 
     def breed(self, partner):
         self.move_back()
@@ -329,10 +329,43 @@ class CyberSheep(Sheep):
     def __init__(self, world):
         super(CyberSheep, self).__init__(world)
         self.cyber = True
-        self.skin = (0, 0, 0)
 
     def give_birth(self):
         return CyberSheep(self.world)
+
+    def get_direction(self):
+        hogWeeds = []
+        for organism in self.world.organisms:
+            if isinstance(organism, Hogweed):
+                hogWeeds.append(organism)
+
+        if len(hogWeeds) == 0:
+            return super().get_direction()
+
+        return self.to_nearest(hogWeeds)
+
+    def to_nearest(self, organisms):
+        selfPosX, selfPosY = self.position["x"], self.position["y"]
+        shortestLen = self.world.terrainWidth + self.world.terrainHeight
+        shortestVector = {"x": self.world.terrainWidth, "y": self.world.terrainHeight}
+        for organism in organisms:
+            posX, posY = organism.position["x"], organism.position["y"]
+            vector = {"x": posX - selfPosX,
+                      "y": posY - selfPosY}
+            length = abs(vector["x"]) + abs(vector["y"])
+            if length < shortestLen:
+                shortestLen = length
+                shortestVector = vector
+        
+        if abs(shortestVector["x"]) > abs(shortestVector["y"]):
+            if shortestVector["x"] < 0:
+                return "LEFT"
+            return "RIGHT"
+        else:
+            if shortestVector["y"] < 0:
+                return "UP"
+            return "DOWN"
+
 
 
 class Turtle(Animal):
@@ -364,8 +397,6 @@ class Turtle(Animal):
             self.world.write_event(
                 self.name() + " took a hit from " + attacker.name() + " and died.", (255, 0, 0))
             self.die()
-
-
 
 
 class Wolf(Animal):

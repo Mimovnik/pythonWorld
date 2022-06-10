@@ -32,14 +32,14 @@ class World:
 
         organismsDensity = 10
         organismsNumber = int(
-            organismsDensity * terrainWidth * terrainHeight / 100)
+            organismsDensity * terrainWidth * terrainHeight / 100) - 11
 
         self.organisms = []
 
         self.organisms.append(Animal.Human(self))
 
-        for o in range(organismsNumber):
-            whichOne = random.randint(1, 11)
+        for i in range(organismsNumber):
+            whichOne = i % 11 + 1
             if whichOne == 1:
                 self.organisms.append(Animal.Antelope(self))
             elif whichOne == 2:
