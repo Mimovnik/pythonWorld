@@ -1,43 +1,33 @@
 import pygame
-from BattleLog import BattleLog
-from World import World
+from Game import Game
 
-pygame.init()
-
-WHITE = (255,255,255)
-
-WIN_WIDTH, WIN_HEIGHT = 900, 900
-TERRAIN_WIDTH, TERRAIN_HEIGHT = 20, 20
-WORLD_WIDTH, WORLD_HEIGHT = 500, 500
-
-WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-pygame.display.set_caption("Python World")
-
-world = World(WORLD_WIDTH, WORLD_HEIGHT, TERRAIN_WIDTH, TERRAIN_HEIGHT, WIN)
-
-battleLog = BattleLog(world.terrain[-1].rect.x + world.terrain[-1].rect.width + 10)
-
-def draw_window():
-    WIN.fill(WHITE)
-    world.draw()
-    battleLog.draw(world.events, WIN)
-    pygame.display.update()
-
-def make_turn():
-    world.events.clear()
-    world.make_actions()
 
 def main():
-    draw_window()
+    pygame.init()
+    WIN_WIDTH, WIN_HEIGHT = 900, 900
+    WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    pygame.display.set_caption("Python World")
+    WIN.fill((255, 255, 255))
+
+    FONT = pygame.font.SysFont("Noto Sans", 32)
+
+    entry = FONT.render("Press 's' to load from save or 'n' to create a new world", True, (0, 0, 0))
+    WIN.blit(entry, (int(WIN_WIDTH / 2 - entry.get_width() / 2), int(WIN_HEIGHT / 2 - entry.get_height() / 2)))
+
+    pygame.display.update()
+
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    make_turn()
-                    draw_window()
+                if event.key == pygame.K_q:
+                    run = False
+                elif event.key == pygame.K_n:
+                    run = Game(WIN).game()
+                elif event.key == pygame.K_s:
+                    run = Game(WIN, True).game()
     pygame.quit()
 
 

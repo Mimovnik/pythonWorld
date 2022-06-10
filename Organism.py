@@ -20,6 +20,22 @@ class Organism:
         self.lastPosition = self.position
         self.birthDate = Organism.counter
 
+    def to_string(self):
+        return self.specie + "," + \
+            str(self.position["x"]) + "," + str(self.position["y"]) + "," + \
+            str(self.lastPosition["x"]) + "," + str(self.lastPosition["y"]) + "," + \
+            str(self.birthDate) + "," + str(self.strength)
+
+    def load(self, position, lastPosition, birthDate, strength):
+        posX, posY = self.position["x"], self.position["y"]
+        self.world.get_cell(posX, posY).organism = 0 
+        self.position = position
+        self.lastPosition = lastPosition
+        self.birthDate = birthDate
+        self.strength = strength
+        posX, posY = self.position["x"], self.position["y"]
+        self.world.get_cell(posX, posY).organism = self 
+
     def name(self):
         return self.specie + "(" + str(self.birthDate) + ")"
 
@@ -34,10 +50,11 @@ class Organism:
 
     def take_hit(self, attacker):
         raise NotImplementedError("Implement Organism take_hit")
-    
+
     def die(self):
         self.dead = True
-        self.world.get_cell(self.position["x"], self.position["y"]).organism = 0
+        self.world.get_cell(
+            self.position["x"], self.position["y"]).organism = 0
 
     def buff(self, additionalStrength):
         self.strength += additionalStrength

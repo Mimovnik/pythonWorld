@@ -214,6 +214,12 @@ class Human(Animal):
         self.abilityActive = abilityActive
         self.abilityOnCooldown = abilityOnCooldown
 
+    def to_string(self):
+        return super().to_string() + "," + \
+            str(self.abilityTurns) + "," + \
+            str(self.abilityActive) + "," + \
+            str(self.abilityOnCooldown)
+
     def give_birth(self):
         return Human(self.world)
 
@@ -255,7 +261,9 @@ class Human(Animal):
                 if event.type == pygame.QUIT:
                     displayBQH = True
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_q:
+                        displayBQH = True
+                    elif event.key == pygame.K_LEFT:
                         return "LEFT"
                     elif event.key == pygame.K_RIGHT:
                         return "RIGHT"
@@ -286,14 +294,14 @@ class Human(Animal):
         y = self.world.terrain[-1].rect.y + \
             self.world.terrain[-1].rect.height + 10
         row = 0
-        FONT = pygame.font.SysFont("Noto Sans", 12)
+        FONT = pygame.font.SysFont("Noto Sans", 17)
         for hint in hints:
             entry = FONT.render(hint, True, (0, 0, 0))
             entry.fill((109, 166, 209))
             self.world.window.blit(entry, (10, y + row))
             entry = FONT.render(hint, True, (0, 0, 0))
             self.world.window.blit(entry, (10, y + row))
-            row += 15
+            row += 23
         pygame.display.update()
 
     def ability(self):
@@ -347,7 +355,8 @@ class CyberSheep(Sheep):
     def to_nearest(self, organisms):
         selfPosX, selfPosY = self.position["x"], self.position["y"]
         shortestLen = self.world.terrainWidth + self.world.terrainHeight
-        shortestVector = {"x": self.world.terrainWidth, "y": self.world.terrainHeight}
+        shortestVector = {"x": self.world.terrainWidth,
+                          "y": self.world.terrainHeight}
         for organism in organisms:
             posX, posY = organism.position["x"], organism.position["y"]
             vector = {"x": posX - selfPosX,
@@ -356,7 +365,7 @@ class CyberSheep(Sheep):
             if length < shortestLen:
                 shortestLen = length
                 shortestVector = vector
-        
+
         if abs(shortestVector["x"]) > abs(shortestVector["y"]):
             if shortestVector["x"] < 0:
                 return "LEFT"
@@ -365,7 +374,6 @@ class CyberSheep(Sheep):
             if shortestVector["y"] < 0:
                 return "UP"
             return "DOWN"
-
 
 
 class Turtle(Animal):
