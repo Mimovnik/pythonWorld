@@ -31,7 +31,7 @@ class Animal(Organism):
                 if defender.specie == self.specie:
                     self.breed(defender)
                     return
-                self.isAttacking = True 
+                self.isAttacking = True
                 self.world.write_event(
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
@@ -144,10 +144,43 @@ class Antelope(Animal):
 class Fox(Animal):
 
     def __init__(self, world):
-        super(Fox, self).__init__(world, 3, 7, "Fox", (247, 150, 0))
+        super(Fox, self).__init__(world, 3, 7, "Fox", (247, 135, 51))
 
     def give_birth(self):
         return Fox(self.world)
+
+    def get_direction(self):
+        emptyDirections = []
+        left = self.world.get_cell(
+            self.position["x"] - 1, self.position["y"])
+
+        right = self.world.get_cell(
+            self.position["x"] + 1, self.position["y"])
+
+        up = self.world.get_cell(
+            self.position["x"], self.position["y"] - 1)
+
+        down = self.world.get_cell(
+            self.position["x"], self.position["y"] + 1)
+
+        if self.is_safe(left):
+            emptyDirections.append("LEFT")
+        if self.is_safe(right):
+            emptyDirections.append("RIGHT")
+        if self.is_safe(up):
+            emptyDirections.append("UP")
+        if self.is_safe(down):
+            emptyDirections.append("DOWN")
+
+        if len(emptyDirections) == 0:
+            return "NOWHERE"
+        else:
+            return emptyDirections[random.randint(0, len(emptyDirections) - 1)]
+
+    def is_safe(self, direction):
+        return direction != "OUT_OF_BOUND" and (direction.organism == 0
+                                                or direction.organism.is_stronger(self) == False
+                                                or direction.organism.specie == self.specie)
 
 
 class Human(Animal):
@@ -180,11 +213,11 @@ class Human(Animal):
                 if defender.specie == self.specie:
                     self.breed(defender)
                     return
-                self.isAttacking = True 
+                self.isAttacking = True
                 self.world.write_event(
                     self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
                 self.collide(defender)
-                self.isAttacking = False 
+                self.isAttacking = False
 
     def get_direction(self):
         displayBQH = False

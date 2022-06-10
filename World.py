@@ -64,6 +64,8 @@ class World:
                 self.organisms.append(Plant.Wolfberry(self))
 
     def get_cell(self, x, y):
+        if x < 0 or x >= self.terrainWidth or y < 0 or y >= self.terrainHeight:
+            return "OUT_OF_BOUND"
         return self.terrain[x + self.terrainWidth * y]
 
     def wipe_cells(self):
