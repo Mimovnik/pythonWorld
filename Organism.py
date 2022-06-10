@@ -28,6 +28,11 @@ class Organism:
 
     def take_hit(self, attacker):
         raise NotImplementedError("Implement Organism take_hit")
+    
+    def buff(self, additionalStrength):
+        self.strength += additionalStrength
+        self.world.write_event(self.name() + " got +" + str(additionalStrength) + " strength.", (0, 255, 0))
+        self.world.write_event("Total(" + str(self.strength) + ").", (0, 255, 0))
 
     def is_stronger(self, other):
         return self.strength >= other.strength

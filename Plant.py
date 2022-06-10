@@ -70,6 +70,11 @@ class Guarana(Plant):
     def get_sapling(self):
         return Guarana(self.world)
 
+    def take_hit(self, attacker):
+        self.world.write_event(self.name() + " got eaten by " + attacker.name() + ".", (255, 0, 0))
+        self.dead = True
+        attacker.buff(3)
+
 
 class Hogweed(Plant):
 
