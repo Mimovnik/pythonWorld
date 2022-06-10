@@ -1,5 +1,7 @@
 from copy import copy
 import random
+
+import pygame
 from Organism import Organism
 
 
@@ -121,12 +123,108 @@ class Fox(Animal):
 
 
 class Human(Animal):
-
-    def __init__(self, world):
+    def __init__(self, world, abilityTurns=0, abilityActive=False, abilityOnCooldown=False):
         super(Human, self).__init__(world, 5, 4, "Human", (255, 195, 170))
+        self.abilityTurns = abilityTurns
+        self.abilityActive = abilityActive
+        self.abilityOnCooldown = abilityOnCooldown
 
     def give_birth(self):
         return Human(self.world)
+
+    def action(self):
+        self.attackedThisTurn = False
+        if(self.stunned):
+            self.stunned = False
+            return
+
+        direction = self.get_direction()
+
+        self.moveRange = 1
+        self.ability()
+        for i in range(self.moveRange):
+            if self.dead:
+                return
+
+            self.lastPosition = copy(self.position)
+            self.move(direction)
+            defender = self.world.get_collider_with(self)
+            if defender != 0:
+                if defender.specie == self.specie:
+                    self.breed(defender)
+                    return
+                self.attackedThisTurn = True
+                self.world.write_event(
+                    self.name() + " attacks " + defender.name() + ".", (255, 120, 0))
+                self.collide(defender)
+
+    def get_direction(self):
+        displayBQH = False
+        while True:
+            hints = []
+            self.set_hints(hints, displayBQH)
+            self.draw_hints(hints)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    displayBQH = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        return "LEFT"
+                    elif event.key == pygame.K_RIGHT:
+                        return "RIGHT"
+                    elif event.key == pygame.K_UP:
+                        return "UP"
+                    elif event.key == pygame.K_DOWN:
+                        return "DOWN"
+                    elif event.key == pygame.K_e:
+                        self.abilityActive = True
+
+    def set_hints(self, hints, displayBQH):
+        hints.append("You're a Human (Pink rectangle), arrows- movement, ")
+        if self.abilityActive:
+            turnsLeft = 5 - self.abilityTurns
+            hints.append("ability is active for the next " +
+                         str(turnsLeft) + " turns.")
+        elif self.abilityOnCooldown:
+            hints.append("ability is on cool down for the next " +
+                         str(self.abilityTurns) + " turns.")
+        else:
+            hints.append("e- activate a special ability.")
+
+        if displayBQH:
+            hints.append("Please move your character before quiting")
+
+    def draw_hints(self, hints):
+        y = self.world.terrain[-1].rect.y + \
+            self.world.terrain[-1].rect.height + 10
+        row = 0
+        FONT = pygame.font.SysFont("Noto Sans", 12)
+        for hint in hints:
+            entry = FONT.render(hint, True, (0, 0, 0))
+            entry.fill((109, 166, 209))
+            self.world.window.blit(entry, (10, y + row))
+            entry = FONT.render(hint, True, (0, 0, 0))
+            self.world.window.blit(entry, (10, y + row))
+            row += 15
+        pygame.display.update()
+
+    def ability(self):
+        if self.abilityActive:
+            self.abilityTurns += 1
+            if self.abilityTurns <= 3:
+                self.moveRange = 2
+            elif random.randint(0, 1) == 1:
+                self.world.write_event("Human got lucky!", (0, 255, 0))
+                self.moveRange = 2
+
+            if self.abilityTurns >= 5:
+                self.abilityActive = False
+                self.abilityOnCooldown = True
+
+        elif self.abilityOnCooldown:
+            self.abilityTurns -= 1
+            if self.abilityTurns <= 0:
+                self.abilityOnCooldown = False
 
 
 class Sheep(Animal):

@@ -11,12 +11,12 @@ class Plant(Organism):
         self.spreadTries = 1
 
     def action(self):
+        if self.dead:
+            raise RuntimeError(self + " should be removed before it's action.")
         if self.stunned:
             self.stunned = False
             return
         for i in range(self.spreadTries):
-            if self.dead:
-                return
             if random.randint(0, 10) == 1:
                 self.spread()
 
