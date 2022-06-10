@@ -83,7 +83,6 @@ class Animal(Organism):
         moveDescription = self.name()
         if direction == "NOWHERE":
             moveDescription += " doesn't move."
-            return
         elif direction == "LEFT":
             if self.position["x"] > 0:
                 self.position["x"] -= 1
@@ -339,10 +338,34 @@ class CyberSheep(Sheep):
 class Turtle(Animal):
 
     def __init__(self, world):
-        super(Turtle, self).__init__(world, 2, 1, "Turtle", (28, 138, 7))
+        super(Turtle, self).__init__(world, 2, 1, "Turtle", (88, 39, 24))
 
     def give_birth(self):
         return Turtle(self.world)
+
+    def get_direction(self):
+        if random.randint(1, 4) == 1:
+            rnd = random.randint(1, 4)
+            if rnd == 1:
+                return "LEFT"
+            elif rnd == 2:
+                return "UP"
+            elif rnd == 3:
+                return "RIGHT"
+            else:
+                return "DOWN"
+        return "NOWHERE"
+
+    def take_hit(self, attacker):
+        if attacker.strength <= 5 and self.isAttacking == False:
+            self.world.write_event(self.name() + " resisted a hit.", self.skin)
+            attacker.move_back()
+        else:
+            self.world.write_event(
+                self.name() + " took a hit from " + attacker.name() + " and died.", (255, 0, 0))
+            self.die()
+
+
 
 
 class Wolf(Animal):
